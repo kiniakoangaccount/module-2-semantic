@@ -1,71 +1,129 @@
 :root {
---clr-navy: #0F2A4A;
---clr-accent: #E85D04;
---clr-text: #1B1F27;
---clr-muted: #5B6472;
---clr-bg: #FAFBFD;
---font-body: "Inter", system-ui, sans-serif;
---font-heading: "Playfair Display", Georgia, serif;
---space-xs: 0.5rem;
---space-sm: 1rem;
---space-md: 1.5rem;
---space-lg: 3rem;
+  --clr-navy: #0F2A4A;
+  --clr-accent: #E85D04;
+  --clr-text: #1B1F27;
+  --clr-muted: #5B6472;
+  --clr-bg: #FAFBFD;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-font-family: var(--font-body);
-color: var(--clr-text);
-background: var(--clr-bg);
-line-height: 1.5;
-padding: var(--space-lg);
-max-width: 65ch;
-margin: 0 auto;
+  font-family: var(--font-body);
+  color: var(--clr-text);
+  background: var(--clr-bg);
+  line-height: 1.5;
+  padding: var(--space-lg);
+  margin: 0 auto;
 }
+
+/* 65ch is a good width for reading paragraphs, but it also capped the .grid's
+   container at ~650px, so the grid could never physically fit more than
+   2-3 columns even on a wide desktop screen. Applying it only to prose
+   elements keeps paragraphs readable without also constraining the grid. */
+p, li {
+  max-width: 65ch;
+}
+
 h1, h2, h3 { font-family: var(--font-heading); color: var(--clr-navy); }
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: var(--space-md); }
-h2 { font-size: 1.75rem; margin: var(--space-lg) 0 var(--space-sm); }
+h2 { font-size: clamp(1.35rem, 4vw, 1.75rem); margin: var(--space-lg) 0 var(--space-sm); }
 
 a { color: var(--clr-accent); }
 
+/* Single source of truth for .card — no duplicate/conflicting rule further down */
 .card {
-width: 200px;
-padding: 24px;
-border: 4px solid var(--clr-accent);
-margin: 16px;
-background: white;
+  box-sizing: border-box;   /* border/padding counted inside the width, so it never
+                                overflows its grid track */
+  width: 100%;              /* fills whatever the grid column gives it, instead of
+                                a fixed 200px that can't shrink */
+  max-width: 320px;         /* optional cap so cards don't stretch too wide on
+                                very large columns; drop this if you want full-bleed */
+  padding: var(--space-md);
+  border: 4px solid var(--clr-accent);
+  border-radius: 12px;
+  background: rgb(250, 250, 250);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  margin: 0;                 /* grid `gap` handles spacing now, so card-level margin
+                                 is redundant and can cause double-gaps */
 }
-
-.card { box-sizing: content-box; }
+.card h3 { color: var(--clr-navy); margin-bottom: var(--space-xs); }
 
 .site-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: var(--space-sm) var(--space-md);
-background: var(--clr-navy);
-color: white;
-max-width: none;
-margin: 0 -3rem var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;           /* lets logo + nav drop to a second line instead of
+                                 overflowing on narrow screens */
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--clr-navy);
+  color: white;
+  max-width: none;
+  margin: 0 calc(-1 * var(--space-lg)) var(--space-lg);
 }
 .site-header .logo { color: white; font-weight: 700; text-decoration: none; }
+
 .nav-links {
-list-style: none;
-display: flex;
-gap: var(--space-md);
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;           /* wraps instead of clipping/overflowing */
+  gap: var(--space-sm) var(--space-md);
 }
 .nav-links a { color: white; text-decoration: none; }
 .nav-links a:hover { color: var(--clr-accent); }
 
+/* Mobile-first: 1 column is the default (no media query needed), then each
+   breakpoint below explicitly raises the column count. This gives exact
+   control over where each tier starts, instead of leaving it to auto-fit
+   to guess based on container width. */
 .grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-gap: var(--space-md);
-margin-top: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
 }
-.card {
-padding: var(--space-md);
-border-radius: 12px;
-background: white;
-box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+
+/* Tablet: 2 columns */
+@media (min-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-.card h3 { color: var(--clr-navy); margin-bottom: var(--space-xs); }
+
+/* Small desktop / large tablet landscape: 3 columns */
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Wide desktop: 4 columns */
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Scale down the fixed 3rem body padding on small screens, and keep the
+   header's negative margin in lockstep so the edges still line up */
+@media (max-width: 600px) {
+  :root {
+    --space-lg: 1.25rem;
+  }
+
+  body {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .site-header {
+    margin: 0 calc(-1 * var(--space-lg)) var(--space-md);
+    padding: var(--space-sm);
+  }
+}
