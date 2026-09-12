@@ -32,8 +32,10 @@ p, li {
 }
 
 h1, h2, h3 { font-family: var(--font-heading); color: var(--clr-navy); }
-h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: var(--space-md); }
-h2 { font-size: clamp(1.35rem, 4vw, 1.75rem); margin: var(--space-lg) 0 var(--space-sm); }
+h1 { font-size: clamp(2rem, 4vw + 1rem, 4rem); line-height: 1.1; }
+h2 { font-size: clamp(1.5rem, 2.5vw + 0.75rem, 2.5rem); }
+h3 { font-size: clamp(1.25rem, 2vw + 0.625rem, 2rem); }
+p { font-size: clamp(1rem, 0.5vw + 0.85rem, 1.15rem); }
 
 a { color: var(--clr-accent); }
 
@@ -55,75 +57,33 @@ a { color: var(--clr-accent); }
 }
 .card h3 { color: var(--clr-navy); margin-bottom: var(--space-xs); }
 
+/* Mobile-first — default styles */
 .site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;           /* lets logo + nav drop to a second line instead of
-                                 overflowing on narrow screens */
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--clr-navy);
-  color: white;
-  max-width: none;
-  margin: 0 calc(-1 * var(--space-lg)) var(--space-lg);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-sm);
+padding: var(--space-sm);
+background: var(--clr-navy);
+color: white;
+margin: 0 -3rem var(--space-lg);
 }
-.site-header .logo { color: white; font-weight: 700; text-decoration: none; }
-
 .nav-links {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;           /* wraps instead of clipping/overflowing */
-  gap: var(--space-sm) var(--space-md);
+list-style: none;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-sm);
 }
-.nav-links a { color: white; text-decoration: none; }
-.nav-links a:hover { color: var(--clr-accent); }
-
-/* Mobile-first: 1 column is the default (no media query needed), then each
-   breakpoint below explicitly raises the column count. This gives exact
-   control over where each tier starts, instead of leaving it to auto-fit
-   to guess based on container width. */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
+/* Enhance for tablet and up */
+@media (min-width: 768px) {
+.site-header {
+flex-direction: row;
+justify-content: space-between;
+padding: var(--space-sm) var(--space-md);
 }
-
-/* Tablet: 2 columns */
-@media (min-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.nav-links {
+flex-direction: row;
+gap: var(--space-md);
 }
-
-/* Small desktop / large tablet landscape: 3 columns */
-@media (min-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Wide desktop: 4 columns */
-@media (min-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Scale down the fixed 3rem body padding on small screens, and keep the
-   header's negative margin in lockstep so the edges still line up */
-@media (max-width: 600px) {
-  :root {
-    --space-lg: 1.25rem;
-  }
-
-  body {
-    padding: var(--space-md) var(--space-lg);
-  }
-
-  .site-header {
-    margin: 0 calc(-1 * var(--space-lg)) var(--space-md);
-    padding: var(--space-sm);
-  }
 }
